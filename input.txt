@@ -1,9 +1,1 @@
-    import a, b, c
-    import s
-from a import x, b
-from r import *
-import a
-from w import *
-	import	b
-from a import x
-
+from django.conf import settings
