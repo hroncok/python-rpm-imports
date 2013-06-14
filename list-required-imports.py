@@ -7,6 +7,8 @@ for root, subs, files in os.walk(sys.argv[1]):
       try:
          with open(os.path.join(root,file)) as f:
             text = f.read()
+            if file.split('.')[-1] != 'py' and (text[0:2] != '#!' or 'python' not in text[:text.find('\n')]):
+               continue
       except:
          pass
       
