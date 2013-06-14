@@ -1,3 +1,4 @@
+# this should be called with %{buildroot}%{python_sitelib} as argument
 import sys, os, pkgutil
 
 # Go to the given directory and add it to sys.path

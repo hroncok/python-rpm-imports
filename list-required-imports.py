@@ -1,3 +1,4 @@
+# this should be called with %{buildroot} as argument
 import re, os, sys
 
 modules = set()
