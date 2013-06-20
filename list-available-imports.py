@@ -12,9 +12,9 @@ for importer, modname, ispkg in pkgutil.walk_packages(path='.'):
         try:
             with open('./'+modname.replace('.','/')+'/__init__.py','r') as f:
                 init_source = f.read()
-            if re.search(r'declare_namespace\s*\(\s*__name__\s*\)',init_source):
+            if re.search(r'^[^#]*declare_namespace\s*\(\s*__name__\s*\)',init_source,re.M):
                 continue
-            if re.search(r'extend_path\s*\(\s*__path__\s*,\s*__name__\s*\)',init_source):
+            if re.search(r'^[^#]*extend_path\s*\(\s*__path__\s*,\s*__name__\s*\)',init_source,re.M):
                 continue
         except IOError:
             pass
