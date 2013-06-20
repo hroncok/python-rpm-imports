@@ -38,6 +38,9 @@ for path in paths:
 
     # List all available modules in that directory
     for importer, modname, ispkg in pkgutil.walk_packages(path='.'):
+        # if module name contains space, do not print it - RPM would misinterpret it
+        if modname.count(' '):
+            continue
         # if module name starts with 1 underscore, do not print it
         try:
             if modname.split('.')[-1][0] == '_' and modname.split('.')[-1][1] != '_':
