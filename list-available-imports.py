@@ -7,6 +7,12 @@ sys.path = ['.'] + list(filter(lambda x: 'site-packages' not in x, sys.path))
 
 # List all available modules in that directory
 for importer, modname, ispkg in pkgutil.walk_packages(path='.'):
+    # if module name starts with 1 underscore, do not print it
+    try:
+        if modname.split('.')[-1][0] == '_' and modname.split('.')[-1][1] != '_':
+            continue
+    except IndexError:
+        pass
     # if it is a directory/package, check if it's not just a namespace
     if ispkg:
         try:
