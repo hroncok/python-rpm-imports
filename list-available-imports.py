@@ -18,4 +18,4 @@ for importer, modname, ispkg in pkgutil.walk_packages(path='.'):
                 continue
         except IOError:
             pass
-    print(modname)
+    print('python-import('+modname+')')
