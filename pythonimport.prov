@@ -23,34 +23,38 @@ Should be called with %{buildroot}%{python_sitelib} as argument.
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
-
 import sys, os, pkgutil, re
 
 paths = [path.rstrip() for path in sys.stdin.readlines()]
 
 for path in paths:
-    if path.endswith('site-packages'):
-        # Go to the given directory and add it to sys.path
-        os.chdir(path)
-        sys.path = ['.'] + list(filter(lambda x: 'site-packages' not in x, sys.path))
+    sp = path.find('/site-packages/')
+    if sp == -1: continue
+    spath = path[:sp]+'/site-packages'
+    # Go to the given directory and add it to sys.path
+    os.chdir(spath)
+    
+    sys.path = ['.'] + list(filter(lambda x: 'site-packages' not in x, sys.path))
 
-        # List all available modules in that directory
-        for importer, modname, ispkg in pkgutil.walk_packages(path='.'):
-            # if module name starts with 1 underscore, do not print it
+    # List all available modules in that directory
+    for importer, modname, ispkg in pkgutil.walk_packages(path='.'):
+        # if module name starts with 1 underscore, do not print it
+        try:
+            if modname.split('.')[-1][0] == '_' and modname.split('.')[-1][1] != '_':
+                continue
+        except IndexError:
+            pass
+        # if it is a directory/package, check if it's not just a namespace
+        if ispkg:
             try:
-                if modname.split('.')[-1][0] == '_' and modname.split('.')[-1][1] != '_':
+                with open('./'+modname.replace('.','/')+'/__init__.py','r') as f:
+                    init_source = f.read()
+                if re.search(r'^[^#]*declare_namespace\s*\(\s*__name__\s*\)',init_source,re.M):
                     continue
-            except IndexError:
+                if re.search(r'^[^#]*extend_path\s*\(\s*__path__\s*,\s*__name__\s*\)',init_source,re.M):
+                    continue
+            except IOError:
                 pass
-            # if it is a directory/package, check if it's not just a namespace
-            if ispkg:
-                try:
-                    with open('./'+modname.replace('.','/')+'/__init__.py','r') as f:
-                        init_source = f.read()
-                    if re.search(r'^[^#]*declare_namespace\s*\(\s*__name__\s*\)',init_source,re.M):
-                        continue
-                    if re.search(r'^[^#]*extend_path\s*\(\s*__path__\s*,\s*__name__\s*\)',init_source,re.M):
-                        continue
-                except IOError:
-                    pass
-            print('python-import('+modname+')')
+        print('python-import('+modname+')')
+    break
+    

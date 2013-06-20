@@ -1,0 +1,2 @@
+%__pythonimport_provides  %{_rpmconfigdir}/pythonimport.prov
+%__pythonimport_path	^/usr/lib(64)?/python2\\.[[:digit:]]/site-packages/.*\\.(py[oc]?|so)$
