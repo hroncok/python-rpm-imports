@@ -58,6 +58,6 @@ for path in paths:
                     continue
             except IOError:
                 pass
-        print('python-import('+modname+')')
+        print('python-import('+modname+') = '+sys.argv[1])
     break
     
