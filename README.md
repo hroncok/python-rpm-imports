@@ -21,7 +21,7 @@ At the beginning I also wanted to automatically list dependencies. The problem i
 
     from foo import bar
 
-So right now, I'v dropped this (but you can see the draft in cde1c06029f6bff27bfe566052e1162ebd45ae25).
+So right now, I'v dropped this (but you can see the draft in cde1c06029).
 
 How to test
 -----------
