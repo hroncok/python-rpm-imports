@@ -8,8 +8,8 @@ This project aims to extend RPM to automatically list available imports for Pyth
 Status
 ------
 
- * The generator somehow works, but needs extended testing.
- * Modules using namespaces doesn't work right now.
+ * The generator somehow works, but needs extended testing
+ * Modules using namespaces doesn't work right now
  * If some module throws an unexpected exception, it will break the process (e.g. pyglet.win32)
  * As [RPM Dependency Generator](http://www.rpm.org/wiki/PackagerDocs/DependencyGenerator) ignores my attempts to catch a directory, for each file this scan the entire directory
  * Doesn't list arch if arched (yet)
