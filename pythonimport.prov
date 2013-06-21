@@ -41,6 +41,16 @@ for path in paths:
     
     sys.path = ['.'] + list(filter(lambda x: 'site-packages' not in x, sys.path))
 
+    # Namespaced packages
+    namespaced = False
+    if not len(list(pkgutil.walk_packages(path='.'))):
+        try:
+            with open(path[:path.find('/',sp+len('/site-packages/'))]+'/__init__.py', 'a') as f:
+                f.write('import pkgutil\n__path__ = pkgutil.extend_path(__path__, __name__)\n')
+            namespaced = True
+        except IOError:
+            pass
+
     # List all available modules in that directory
     for importer, modname, ispkg in pkgutil.walk_packages(path='.'):
         # if module name contains space, do not print it - RPM would misinterpret it
@@ -66,5 +76,11 @@ for path in paths:
         print('python-import('+modname+') = '+sys.argv[1])
         if lib64:
             print('python-import('+modname+')(64bit) = '+sys.argv[1])
+    
+    if namespaced:
+        try:
+            os.remove(path[:path.find('/',sp+len('/site-packages/'))]+'/__init__.py')
+        except IOError:
+            pass    
     break
     
