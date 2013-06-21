@@ -2,7 +2,7 @@
 """
 Automatic provides generator for Python modules.
 
-Should be called with %{buildroot}%{python_sitelib} as argument.
+Should be called with version of the package as argument.
 """
 # Copyright 2013 Miro Hroncok <mhroncok@redhat.com>
 #
