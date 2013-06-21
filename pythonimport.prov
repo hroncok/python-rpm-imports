@@ -33,7 +33,7 @@ for path in paths:
     spath = path[:sp]+'/site-packages'
     
     lib64 = False
-    if path.count('/lib64/site-packages/'):
+    if '/lib64/' in path:
         lib64 = True
     
     # Go to the given directory and add it to sys.path
@@ -44,7 +44,7 @@ for path in paths:
     # List all available modules in that directory
     for importer, modname, ispkg in pkgutil.walk_packages(path='.'):
         # if module name contains space, do not print it - RPM would misinterpret it
-        if modname.count(' '):
+        if ' ' in modname:
             continue
         # if module name starts with 1 underscore, do not print it
         try:
