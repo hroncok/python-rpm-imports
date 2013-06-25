@@ -1,2 +1,2 @@
 %__pythonimport_provides  %{_rpmconfigdir}/pythonimport.prov %{version}
-%__pythonimport_path	^%{_prefix}/lib(64)?/python2\\.[[:digit:]]/site-packages/.*\\.(py|so)$
+%__pythonimport_path	^(%{python_sitelib}|%{python_sitearch})/.*\\.(py|so)$
