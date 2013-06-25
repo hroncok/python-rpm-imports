@@ -27,10 +27,12 @@ import sys, os, pkgutil, re
 
 paths = [path.rstrip() for path in sys.stdin.readlines()]
 
+spdirname = 'site-packages'
+
 for path in paths:
-    sp = path.find('/site-packages/')
+    sp = path.find('/'+spdirname+'/')
     if sp == -1: continue
-    spath = path[:sp]+'/site-packages'
+    spath = os.path.join(path[:sp],spdirname)
     
     lib64 = False
     if '/lib64/' in path:
