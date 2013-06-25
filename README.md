@@ -9,7 +9,6 @@ Status
 ------
 
  * The generator somehow works, but needs extended testing
- * Modules using namespaces work, but only if the namespace is the first module (e.g. `zope` in `zope.interface`)
  * If some module throws an unexpected exception, it will break the process (e.g. pyglet.win32)
  * As [RPM Dependency Generator](http://www.rpm.org/wiki/PackagerDocs/DependencyGenerator) ignores my attempts to catch a directory, for each file this scan the entire directory
 
