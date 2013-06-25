@@ -29,6 +29,16 @@ paths = [path.rstrip() for path in sys.stdin.readlines()]
 
 spdirname = 'site-packages'
 
+try:
+    version = sys.argv[1]
+except:
+    raise Exception('Not enough arguments!')
+
+try:
+    prefix = sys.argv[2] + '-'
+except IndexError:
+    prefix = ''
+
 for path in paths:
     sp = path.find('/'+spdirname+'/')
     if sp == -1: continue
@@ -63,8 +73,8 @@ for path in paths:
                     continue
             except IOError:
                 pass
-        print('python-import('+modname+') = '+sys.argv[1])
+        print(prefix+'python-import('+modname+') = '+version)
         if lib64:
-            print('python-import('+modname+')(64bit) = '+sys.argv[1])
+            print(prefix+'python-import('+modname+')(64bit) = '+version)
     break
     
