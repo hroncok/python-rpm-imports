@@ -34,20 +34,18 @@ for path in paths:
     if sp == -1: continue
     spath = os.path.join(path[:sp],spdirname)
     
-    lib64 = False
-    if '/lib64/' in path:
-        lib64 = True
+    lib64 = '/lib64/' in spath
     
     # Go to the given directory and add it to sys.path
     os.chdir(spath)
     
-    sys.path = ['.'] + list(filter(lambda x: 'site-packages' not in x, sys.path))
+    sys.path = ['.'] + list(filter(lambda x: spdirname not in x, sys.path))
 
     # Namespaced packages
     namespaced = False
     if not len(list(pkgutil.walk_packages(path='.'))):
         try:
-            with open(path[:path.find('/',sp+len('/site-packages/'))]+'/__init__.py', 'a') as f:
+            with open(path[:path.find('/',sp+len(spdirname)+2)]+'/__init__.py', 'a') as f:
                 f.write('import pkgutil\n__path__ = pkgutil.extend_path(__path__, __name__)\n')
             namespaced = True
         except IOError:
@@ -81,7 +79,7 @@ for path in paths:
     
     if namespaced:
         try:
-            os.remove(path[:path.find('/',sp+len('/site-packages/'))]+'/__init__.py')
+            os.remove(path[:path.find('/',sp+len(spdirname)+2)]+'/__init__.py')
         except IOError:
             pass    
     break
