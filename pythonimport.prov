@@ -35,6 +35,13 @@ try:
 except:
     raise Exception('Not enough arguments!')
 
+# Do not print version for packages using %filter_setup
+# https://bugzilla.redhat.com/show_bug.cgi?id=982212
+if version == '%{version}':
+    version_string = ''
+else:
+    version_string = ' = '+version
+
 try:
     prefix = sys.argv[2] + '-'
 except IndexError:
@@ -50,7 +57,10 @@ for path in paths:
     mother = cdir[len(spath)+1:].replace('/','.')+'.'
     if mother == '.':
         mother = ''
-    lib64 = '/lib64/' in spath
+    if '/lib64/' in spath:
+        lib64 = '(64bit)'
+    else:
+        lib64 = ''
     
     # Go to the given directory and add it to sys.path
     os.chdir(cdir)
@@ -86,8 +96,6 @@ for path in paths:
                         continue
                 except IOError:
                     pass
-            print(prefix+'python-import('+modname+') = '+version)
-            if lib64:
-                print(prefix+'python-import('+modname+')(64bit) = '+version)
+            print(prefix+'python-import('+modname+')'+lib64+version_string)
     except:
         pass
