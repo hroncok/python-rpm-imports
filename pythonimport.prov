@@ -28,6 +28,7 @@ import sys, os, pkgutil, re
 paths = [path.rstrip() for path in sys.stdin.readlines()]
 
 spdirname = 'site-packages'
+initname = '__init__.py'
 
 try:
     version = sys.argv[1]
@@ -44,53 +45,49 @@ for path in paths:
     if sp == -1: continue
     spath = os.path.join(path[:sp],spdirname)
     cdir = os.path.dirname(path)
-    mother = cdir[len(spath)+1:].replace('/','.')
+    if os.path.basename(path) == initname:
+        cdir = os.path.dirname(cdir)
+    mother = cdir[len(spath)+1:].replace('/','.')+'.'
+    if mother == '.':
+        mother = ''
     lib64 = '/lib64/' in spath
-    cdirs = [cdir]
-    if mother != '':
-        mother += '.'
-        cdirs += [spath]
     
-    for cd in cdirs:
-        if cd == spath:
-            mother = ''
-        
-        # Go to the given directory and add it to sys.path
-        os.chdir(cd)
-        
-        sys.path = ['.'] + list(filter(lambda x: spdirname not in x, sys.path))
+    # Go to the given directory and add it to sys.path
+    os.chdir(cdir)
+    
+    sys.path = ['.'] + list(filter(lambda x: spdirname not in x, sys.path))
 
-        # List all available modules in that directory
-        try:
-            for importer, modname, ispkg in pkgutil.walk_packages(path='.',prefix=mother):
-                # if module name contains space, do not print it
-                # RPM would misinterpret it
-                # you should not name your modules with spaces anyway
-                if ' ' in modname:
-                    continue
-                # if module name starts with 1 underscore, do not print it
-                underscore = False
-                for mod in modname.split('.'):
-                    try:
-                        if mod[0] == '_' and mod[1] != '_':
-                            underscore = True
-                            break
-                    except IndexError:
-                        pass
-                if underscore: continue
-                # if it is a directory/package, check if it's not just a namespace
-                if ispkg:
-                    try:
-                        with open(os.path.join(spath,modname.replace('.','/'),'__init__.py'),'r') as f:
-                            init_source = f.read()
-                        if re.search(r'^[^#]*declare_namespace\s*\(\s*__name__\s*\)',init_source,re.M):
-                            continue
-                        if re.search(r'^[^#]*extend_path\s*\(\s*__path__\s*,\s*__name__\s*\)',init_source,re.M):
-                            continue
-                    except IOError:
-                        pass
-                print(prefix+'python-import('+modname+') = '+version)
-                if lib64:
-                    print(prefix+'python-import('+modname+')(64bit) = '+version)
-        except:
-            pass
+    # List all available modules in that directory
+    try:
+        for importer, modname, ispkg in pkgutil.walk_packages(path='.',prefix=mother):
+            # if module name contains space, do not print it
+            # RPM would misinterpret it
+            # you should not name your modules with spaces anyway
+            if ' ' in modname:
+                continue
+            # if module name starts with 1 underscore, do not print it
+            underscore = False
+            for mod in modname.split('.'):
+                try:
+                    if mod[0] == '_' and mod[1] != '_':
+                        underscore = True
+                        break
+                except IndexError:
+                    pass
+            if underscore: continue
+            # if it is a directory/package, check if it's not just a namespace
+            if ispkg:
+                try:
+                    with open(os.path.join(spath,modname.replace('.','/'),'__init__.py'),'r') as f:
+                        init_source = f.read()
+                    if re.search(r'^[^#]*declare_namespace\s*\(\s*__name__\s*\)',init_source,re.M):
+                        continue
+                    if re.search(r'^[^#]*extend_path\s*\(\s*__path__\s*,\s*__name__\s*\)',init_source,re.M):
+                        continue
+                except IOError:
+                    pass
+            print(prefix+'python-import('+modname+') = '+version)
+            if lib64:
+                print(prefix+'python-import('+modname+')(64bit) = '+version)
+    except:
+        pass
